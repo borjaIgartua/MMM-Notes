@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Your Todo List</title>
+    <!--    begin meta-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!--    end meta-->
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto+Mono:100,100i,300,300i,400,400i,500,500i,700,700i');
+
+        html {
+            overflow: hidden;
+        }
+
+        body {
+            overflow-y: scroll;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: 'Roboto Mono', 'Roboto', Helvetica, sans-serif;
+            font-weight: 300;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+            margin: 1vw;
+            padding: 2vw;
+            padding-left: 0;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus,
+        button:focus {
+            outline: none;
+        }
+
+        #tutorial-btn {
+            width: 19px;
+            height: 19px;
+            background-color: transparent;
+            color: whitesmoke;
+            border: 1px solid whitesmoke;
+            border-radius: 50%;
+            padding: 0;
+            font-size: .7rem;
+        }
+
+        #alert-box {
+            margin-left: 15%;
+            /* material red */
+            color: #f44336;
+        }
+
+        .create-todo-input {
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid #424242;
+            display: inline;
+            max-width: 60%;
+            margin-left: 1rem;
+            padding: 10px;
+            text-align: left;
+            font-size: calc(.75rem + .5vw);
+            font-family: 'Roboto Mono';
+        }
+
+        .create-todo-input:focus {
+            /* sky blue */
+            border-bottom: 3px solid #03A9F4;
+        }
+
+        .create-todo-btn {
+            display: inline-block;
+            border: none;
+            appearance: none;
+            box-shadow: none;
+            margin: 0 0 0 5px;
+            padding: 0 0 0 0;
+            vertical-align: bottom;
+            background-color: transparent;
+            font-size: calc(2rem + .5vw);
+            /* dark grey */
+            color: #424242;
+        }
+
+        #toggle-all-btn {
+            vertical-align: bottom;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #01579B;
+            border-radius: 1px;
+            width: 2rem;
+            height: 2rem;
+            border-width: 0;
+            transition: all .3s linear;
+            margin-left: 1vw;
+            color: white;
+            font-weight: 100;
+        }
+
+        #toggle-all-btn::before {
+            content: "✓";
+            font-size: 25px;
+            padding: 5px;
+        }
+
+        #toggle-all-btn:checked {
+            background-color: #03A9F4;
+        }
+
+        #toggle-all-btn:focus {
+            outline: 0 none;
+            box-shadow: none;
+        }
+
+        .app-container {
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .title-div {
+            margin: .25vw;
+            padding: 20px;
+            border-radius: 3px;
+            /* darker blue */
+            background: #03A9F4;
+            text-align: center;
+        }
+
+        .title-div .title {
+            color: #FFFFFF;
+            font-size: calc(1.5rem + .5vw);
+            font-weight: 100;
+        }
+
+        .tutorial-div {
+            border-left: calc(2rem + 4vw) solid grey;
+            border-radius: 3px;
+            margin: .25vw;
+            padding: 3vw 7vw;
+            text-align: left;
+        }
+
+        .tutorial-div h2 {
+            color: #03A9F4;
+            font-weight: 400;
+            padding: 0;
+            margin: 0;
+            margin-bottom: 1rem;
+        }
+
+        .feature-div {
+            margin: 3vw;
+        }
+
+        .tutorial-div .feature-title {
+            display: block;
+            color: #424242;
+            font-weight: 500;
+            font-size: 1.25rem;
+            margin-bottom: 1vw;
+        }
+
+        .tutorial-div .feature-text {
+            display: block;
+            color: darkgrey;
+            font-size: 1rem;
+            margin-left: 1.5rem;
+            line-height: 1.5rem;
+            font-family: 'Roboto', Helvetica, sans-serif;
+        }
+
+        .content-div {
+            max-height: 100%;
+            max-width: 100%;
+            text-align: center;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hide {
+            display: none !important;
+        }
+
+        .todo-create-div {
+            text-align: left;
+        }
+
+        .todos-view-box {
+            text-align: left;
+        }
+
+        .todo-check-box {
+            display: inline-block;
+            vertical-align: middle;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #01579B;
+            border-radius: 1px;
+            width: 2rem;
+            height: 2rem;
+            border-width: 0;
+            transition: all .3s linear;
+            margin: 0;
+            margin-right: calc(1rem + .5vw);
+        }
+
+        .todo-check-box:checked {
+            background-color: #03A9F4;
+        }
+
+        .todo-check-box:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .todos-strikethrough {
+            text-decoration: line-through;
+            /*light grey*/
+            color: #E0E0E0 !important;
+        }
+
+        .todo-label {
+            display: inline-block;
+            vertical-align: middle;
+            overflow-wrap: break-word;
+            max-width: 70%;
+            margin: 0 5px;
+            font-size: calc(1rem + .5vw);
+            /* darkest grey */
+            color: #424242;
+        }
+
+        .update-Box {
+            display: inline-block;
+            border: none;
+            border-bottom: 3px solid #03A9F4;
+            /* sky blue */
+            vertical-align: middle;
+            margin-left: 5px;
+            width: 60%;
+            padding: 10px;
+            font-size: calc(1rem + .5vw);
+            /* darkest grey */
+            color: #424242;
+        }
+
+        .delete-btn {
+            float: right;
+            display: inline-block;
+            border: none;
+            vertical-align: middle;
+            background-color: transparent;
+            font-size: calc(1rem + 1vw);
+            margin-top: 0;
+            padding: 0;
+            /* light grey */
+            color: #E0E0E0;
+        }
+
+        .delete-btn:hover {
+            /* darkest grey */
+            color: #424242;
+        }
+
+        .spacer {
+            height: 100px;
+            display: block;
+        }
+
+        .version-number {
+            /* darkest grey */
+            color: #424242;
+            font-weight: 600;
+            font-size: calc(.5rem + .5vw);
+        }
+
+        @media (min-width:1025px) {
+            .app-container {
+                max-width: 100vw;
+                margin: 0 auto;
+            }
+            .content-div {
+                max-width: 50vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <div class="app-container">
+        <div class="header-div">
+            <div class="title-div">
+                <span class="title">Añade una alerta</span>
+            </div>
+        </div>
+        <div class="content-div">
+                <div class="todo-create-div">
+                    <input class="create-todo-input" id="create-alert-input" type="text" placeholder="eeeeeeh!" onkeyup="controller.sendAlertEntered()">
+                    <button class="create-todo-btn" onclick="controller.sendAlert()">+</button>
+                    <div id="alert-box"></div>
+                </div>
+            </div>
+        <div class="header-div">
+            <div class="title-div">
+                <span class="title">Tareas</span>
+            </div>
+        </div>
+        <div class="content-div">
+            <div class="todo-create-div">
+                <input id="toggle-all-btn" class="hide" type="checkbox" onclick="controller.toggleAll()">
+                <input class="create-todo-input" id="create-todo-input" type="text" placeholder="Que quiere tu" onkeyup="controller.createTodoEntered()">
+                <button class="create-todo-btn hide" id="create-todo-btn" onclick="controller.createTodo()">+</button>
+                <div id="alert-box"></div>
+            </div>
+            <div class="todos-view-box">
+                <br>
+                <ul></ul>
+            </div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+    <!--javascript file links -->
+    <script>
+        (function() {
+            var xhr = new XMLHttpRequest();
+                xhr.open( "GET", "/notes", true );
+                xhr.responseType = 'json';
+                xhr.onreadystatechange = function () {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        xhr.response.forEach(function(note) {
+                            if (note) {
+                                todoModel.createTodo(note);
+                            }
+                        });
+                        view.displayTodos();
+                    } else {                        
+                    }
+                };
+                xhr.send();
+
+        })();
+        //  Global variables declared for enter and escape keys.
+        var enter_key = 13;
+        var esc_key = 27;
+        //  todoModel object represents the model of this app.
+        var todoModel = {
+            todos: [],
+            countTodos: function () {
+                var totalTodos = this.todos.length;
+                var completedTodos = 0;
+                //  Gets the number of completed todos.
+                this.todos.forEach(function (todo) {
+                    if (todo.completed === true) {
+                        completedTodos++;
+                    }
+                });
+                return {
+                    totalTodos: totalTodos,
+                    completedTodos: completedTodos
+                };
+            },
+            createTodo: function (todoText) {
+                var alertBox = document.getElementById("alert-box");
+                //  We trim the users todo input before adding it to our data array.
+                var trimmedTodoText = todoText.trim();
+                if (trimmedTodoText) {
+                    this.todos.push({
+                        todoText: trimmedTodoText,
+                        completed: false
+                    });
+                    alertBox.textContent = "";
+                } else {
+                    alertBox.textContent = "Vacía, enserio?";
+                    setTimeout(function () {
+                        alertBox.textContent = "";
+                    }, 3000);
+                }
+            },
+            changeTodo: function (position, todoText) {
+                this.todos[position].todoText = todoText;
+            },
+            deleteTodo: function (position) {
+                this.todos.splice(position, 1);
+            },
+            //  Takes in todo item position and switches the boolean value of the completed status.
+            toggleCompleted: function (position) {
+                //  Grabs the todo item from the array and sets it to the todo variable.
+                var todo = this.todos[position];
+                //  Switches the boolean value of the completed status.
+                todo.completed = !todo.completed;
+            },
+            toggleAll: function () {
+                var totalTodos = this.todos.length;
+                var completedTodos = 0;
+
+                //  Gets the number of completed todos.
+                this.todos.forEach(function (todo) {
+                    if (todo.completed === true) {
+                        completedTodos++;
+                    }
+                });
+
+                this.todos.forEach(function (todo) {
+                    //  Case 1: If everything's true, make everything false.
+                    if (completedTodos === totalTodos) {
+                        todo.completed = false;
+                        //  Case 2: Otherwise, make everything true.
+                    } else {
+                        todo.completed = true;
+                    }
+                });
+            },
+            isMobileDevice: function () {
+                return (
+                    typeof window.orientation !== "undefined" ||
+                    navigator.userAgent.indexOf("IEMobile") !== -1
+                );
+            }
+        };
+
+        //  view object represents the view of this app.
+        var view = {
+            displayTodos: function () {
+                //  grabs the <ul> element and sets it to todosUl variable.
+                var todosUl = document.querySelector("ul");
+                //  Clears out the content inside <ul> to make sure we're starting clean.
+                todosUl.innerHTML = "";
+                //  Note that the 'this' argument in the forEach method is to bind 'this' for the callback function so it has access to the view object inside the callback.
+                todoModel.todos.forEach(function (todo, position) {
+                    //  Creates an li element
+                    var todoLi = document.createElement("li");
+                    //  Builds the checkbox
+                    var toggleCheckbox = document.createElement("input");
+                    toggleCheckbox.type = "checkbox";
+                    toggleCheckbox.classList.add("todo-check-box");
+                    toggleCheckbox.setAttribute(
+                        "onchange",
+                        "controller.toggleCompleted(this)"
+                    );
+
+                    //  Builds the updateBox
+                    var updateBox = document.createElement("input");
+                    updateBox.classList.add("update-Box", "hide");
+                    updateBox.type = "text";
+                    updateBox.value = todo.todoText;
+                    updateBox.setAttribute("onkeyup", "controller.updateKeyup(this)");
+                    updateBox.setAttribute("onfocusout", "controller.updateFocusOut(this)");
+                    //  Builds the todo item text label
+                    var todoItemLabel = document.createElement("label");
+                    todoItemLabel.setAttribute("onclick", "controller.updatingMode(this)");
+                    todoItemLabel.textContent = todo.todoText;
+                    todoItemLabel.classList.add("todo-label");
+                    //  Builds the mobile edit button
+                    var mobileEditButton = document.createElement("button");
+                    mobileEditButton.setAttribute(
+                        "onclick",
+                        "controller.mobileUpdatingMode(this)"
+                    );
+                    mobileEditButton.textContent = "Edit";
+                    mobileEditButton.classList.add("hide", "editButton");
+                    //  Removes hide class on mobile edit button if mobile is detected as true
+                    if (todoModel.isMobileDevice()) {
+                        mobileEditButton.classList.remove("hide");
+                    }
+                    //  Toggles the strikethrough class when user clicks checkbox or toggle all.
+                    if (todo.completed === true) {
+                        todoItemLabel.classList.add("todos-strikethrough");
+                    } else {
+                        todoItemLabel.classList.remove("todos-strikethrough");
+                    }
+                    //  Sets the position of the forEach loop as the id for the todoLi element we're building.
+                    todoLi.id = position;
+                    //  Displays checked or unchecked for checkbox depending on todo item completed status.
+                    if (todo.completed === true) {
+                        toggleCheckbox.checked = true;
+                    } else {
+                        toggleCheckbox.checked = false;
+                    }
+                    //  Adds the built-up toggleCheckbox as a child of the <li> element.
+                    todoLi.appendChild(toggleCheckbox);
+                    //  Adds the built-up todo item label as a child of the <li> element.
+                    todoLi.appendChild(todoItemLabel);
+                    //  Add the text box with todos text after the todo text node.
+                    todoLi.appendChild(updateBox);
+                    // Add the mobile edit button here
+                    // todoLi.appendChild(mobileEditButton);
+                    //  Adds the delete button as a child to the created <li> element by running the createDeleteButton method.
+                    todoLi.appendChild(this.createDeleteButton());
+                    // Adds the finalized <li> element in the beginning of the <ul> as a child of the <ul> element.
+                    todosUl.insertBefore(todoLi, todosUl.childNodes[0]);
+                }, this);
+                //  Shows the toggleAll button if there's at least one todo. Hides it if there's no todos.
+                // var toggleAllButton = document.querySelector("#toggle-all-btn");
+                // if (todoModel.countTodos().totalTodos > 0) {
+                //     toggleAllButton.classList.remove("hide");
+                // } else {
+                //     toggleAllButton.classList.add("hide");
+                // }
+                //  Shows the create todo button if user types something. Once user removes their input or enter a new todo, it will disappear.
+                var createTodoButton = document.querySelector("#create-todo-btn");
+                var inputElement = document.getElementById("create-todo-input");
+                if (inputElement.value) {
+                    createTodoButton.classList.remove("hide");
+                } else {
+                    createTodoButton.classList.add("hide");
+                }
+            },
+            toggleHide: function (selectedElement) {
+                //  Toggles the hide class which shows or hides the element being passed in.
+                selectedElement.classList.toggle("hide");
+            },
+            // toggleTutorialDiv: function () {
+            //     var tutorialDiv = document.querySelector('.tutorial-div');
+            //     this.toggleHide(tutorialDiv);
+            // },
+            createDeleteButton: function () {
+                var deleteButton = document.createElement("button");
+                deleteButton.textContent = "x";
+                deleteButton.className = "delete-btn";
+                return deleteButton;
+            },
+            setUpEventListeners: function () {
+                var todosUl = document.querySelector("ul");
+
+                todosUl.addEventListener("click", function (event) {
+                    //  Get the element that was clicked on.
+                    var elementClicked = event.target;
+
+                    //  Check if elementClicked is a delete button.//  Global variables declared for enter and escape keys.
+                    if (elementClicked.className === "delete-btn") {
+                        controller.deleteTodo(parseInt(elementClicked.parentNode.id));
+                    }
+                });
+            }
+        };
+
+        //  controller object represents the controller of this app.
+        var controller = {
+            createTodo: function () {
+                var createTodoTextInput = document.getElementById("create-todo-input");
+                todoModel.createTodo(createTodoTextInput.value);
+                
+                var xhr = new XMLHttpRequest();
+                var requestData = JSON.stringify({note: createTodoTextInput.value});
+                xhr.open( "POST", "/note", true );
+                xhr.setRequestHeader( "Content-type", "application/json" );
+                xhr.onreadystatechange = function () {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        
+                        createTodoTextInput.value = '';
+                        view.displayTodos();
+                    } else {
+                        //TODO: show error
+                    }
+                };
+                xhr.send(requestData);                
+            },
+            createTodoEntered: function () {
+                var inputElement = document.getElementById("create-todo-input");
+                if (inputElement.value && event.keyCode === enter_key) {
+                    // On mobile, defocuses input to hide soft keyboard so user can see their entered todo item.
+                    if (todoModel.isMobileDevice()) {
+                        inputElement.blur();
+                    }
+                    this.createTodo();
+                }
+                view.displayTodos();
+            },
+            sendAlert: function () {
+                var sendAlertTextInput = document.getElementById("create-alert-input");
+                
+                var xhr = new XMLHttpRequest();
+                var requestData = JSON.stringify({alert: sendAlertTextInput.value});
+                xhr.open( "POST", "/alert", true );
+                xhr.setRequestHeader( "Content-type", "application/json" );
+                xhr.onreadystatechange = function () {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        
+                        sendAlertTextInput.value = '';
+                    } else {
+                        
+                    }
+                };
+                xhr.send(requestData);
+            },
+            sendAlertEntered: function () {
+                var inputElement = document.getElementById("create-alert-input");
+                if (inputElement.value && event.keyCode === enter_key) {
+                    // On mobile, defocuses input to hide soft keyboard so user can see their entered todo item.
+                    if (todoModel.isMobileDevice()) {
+                        inputElement.blur();
+                    }
+                    this.sendAlert();
+                }
+            },
+            updateKeyup: function (updateInputElement) {
+                // Grabs id attribute from parent <li> element
+                var id = updateInputElement.parentNode.getAttribute("id");
+                // Grabs the new input value that the user entered.
+                var newUpdateInputValue = updateInputElement.value;
+                // If the there's something in the update box and enter key was pressed, then run the changeTodo method. 
+                if (updateInputElement.value && event.keyCode === enter_key) {
+                    this.changeTodo(id, newUpdateInputValue);
+                }
+                // If the esc key was pressed then we reset the value back to the original stored value in our todos array.
+                if (event.keyCode === esc_key) {
+                    //  Very important line. If the updateInputElement.value is not reset to the original value, then updateFocusOut method would still run and update the data even when esc key is pressed.
+                    updateInputElement.value = todoModel.todos[id].todoText;
+                    view.displayTodos();
+                }
+            },
+            updateFocusOut: function (updateInputElement) {
+                var id = updateInputElement.parentNode.getAttribute("id");
+                var newUpdateInputValue = updateInputElement.value;
+                if (updateInputElement.value) {
+                    this.changeTodo(id, newUpdateInputValue);
+                } else {
+                    controller.deleteTodo(id);
+                }
+            },
+            changeTodo: function (id, value) {
+                todoModel.changeTodo(id, value);
+                view.displayTodos();
+            },
+            deleteTodo: function (position) {
+
+                var xhr = new XMLHttpRequest();
+                xhr.open( "DELETE", `/note?position=${position}`, true );
+                xhr.onreadystatechange = function () {
+                    if(xhr.readyState === 4 && xhr.status === 200) {                    
+                        todoModel.deleteTodo(position);
+                        view.displayTodos();
+
+                    } else {
+                        // alert("Capasao...? inténtalo otra vez anda");                       
+                    }
+                };
+                xhr.send();                
+            },
+            updatingMode: function (todoLabelElement) {
+                var updateBoxElement = todoLabelElement.parentNode.querySelector(
+                    ".update-Box"
+                );
+                view.toggleHide(todoLabelElement);
+                view.toggleHide(updateBoxElement);
+                updateBoxElement.focus();
+            },
+            mobileUpdatingMode: function (editButtonElement) {
+                var updateBoxElement = editButtonElement.parentNode.querySelector(
+                    ".update-Box"
+                );
+                var todoLabelElement = editButtonElement.parentNode.querySelector(
+                    ".todo-label"
+                );
+                view.toggleHide(todoLabelElement);
+                view.toggleHide(updateBoxElement);
+            },
+            //  The controller for the todo item toggle. Takes the argument 'this' from the toggle check box in the DOM.
+            toggleCompleted: function (toggleElement) {
+                //  Gets the id from the parent (<li>) of the toggle check box and passes it to the toggleCompleted in the model. toggleCompleted switches the boolean value in the actual todo item object.
+                todoModel.toggleCompleted(toggleElement.parentNode.getAttribute("id"));
+                //  Runs the view.displayTodos() to update the DOM so the user can see the changes.
+                view.displayTodos();
+            },
+            toggleAll: function () {
+                todoModel.toggleAll();
+                view.displayTodos();
+            }
+        };
+
+        view.setUpEventListeners();
+    </script>
+    <!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+
+</html>
