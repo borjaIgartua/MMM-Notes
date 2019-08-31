@@ -404,6 +404,12 @@
                 var todo = this.todos[position];
                 //  Switches the boolean value of the completed status.
                 todo.completed = !todo.completed;
+
+                // var xhr = new XMLHttpRequest();
+                // var requestData = JSON.stringify({position: position, value: todo.completed});
+                // xhr.open( "POST", "/toggle", true );
+                // xhr.setRequestHeader( "Content-type", "application/json" );
+                // xhr.send(requestData);
             },
             toggleAll: function () {
                 var totalTodos = this.todos.length;
@@ -673,7 +679,7 @@
             },
             //  The controller for the todo item toggle. Takes the argument 'this' from the toggle check box in the DOM.
             toggleCompleted: function (toggleElement) {
-                //  Gets the id from the parent (<li>) of the toggle check box and passes it to the toggleCompleted in the model. toggleCompleted switches the boolean value in the actual todo item object.
+                //  Gets the id from the parent (<li>) of the toggle check box and passes it to the toggleCompleted in the model. toggleCompleted switches the boolean value in the actual todo item object.                
                 todoModel.toggleCompleted(toggleElement.parentNode.getAttribute("id"));
                 //  Runs the view.displayTodos() to update the DOM so the user can see the changes.
                 view.displayTodos();

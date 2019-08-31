@@ -7,19 +7,15 @@ const path = require( "path" );
 const fs = require( "fs" );
 const bodyParser = require( "body-parser" );
 
+const notesPath = path.join( __dirname + "/taskApp/notes.txt" );
+
 module.exports = NodeHelper.create( {
 
 	// Subclass start method.
 	start: function() {
 		console.log( "Starting node helper for: " + this.name );
 		var self = this;
-		this.expressApp.use(bodyParser.json());
-		var notesPath = path.join( __dirname + "/taskApp/notes.txt" );
-
-		this.getNotes(notesPath, function(err, notes) {
-			if (err) return;
-			self.sendSocketNotification("UPDATE_NOTES", notes);
-		});
+		this.expressApp.use(bodyParser.json());				
 
 		//Send the starting values with the page		
 		this.expressApp.get( '/notesApp', function( req, res ) { 
@@ -74,8 +70,18 @@ module.exports = NodeHelper.create( {
     },    
 	socketNotificationReceived: function( notification, payload ) {
 		if (notification == 'NOTE_CONFIG') {
-			console.log(`Module ${this.name} configured`);		
+			console.log(`Module ${this.name} configured`);
+
+			var self = this;
+			this.getNotes(notesPath, function(err, notes) {
+				if (err) return;	
+				self.sendSocketNotification("UPDATE_NOTES", notes);
+			});	
 		}		
+
+		if (notification == "CONSOLE_LOG") {
+			console.log(payload);			
+		}
 	},
 	getLines: function(path, callback) {
 		fs.readFile(path, 'utf8', function read(err, data) {

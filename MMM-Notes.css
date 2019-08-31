@@ -1,12 +1,10 @@
 .GSL_ITEM {
-    list-style-type: circle;
+    list-style-type: none;
     line-height:100%;
-    font-size:20px;
-    border-radius: 4px;
-    padding:3px;
-    background-color:#666;
+    font-size:25px;            
     color:#FFF;
     margin:2px;
+    padding: 10px;    
   }
   
   .GSL_ITEM * {
